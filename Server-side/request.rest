@@ -1,0 +1,34 @@
+POST http://localhost:5000/api/v1/users/register
+Content-Type: application/json
+
+{
+    "email": "arsenki270107@gmail.com",
+    "password": "123456",
+    "username": "aryagemink",
+    "name" : "ariya sencaki",
+    "no_telp": "08xxxxxxx",
+    "gender": "L",
+    "role": "user",
+    "tgl_lahir": "2001-01-27",
+    "isVerifed" : false
+}
+
+### Create Category
+POST http://localhost:5000/api/v1/category/
+Content-Type: application/json
+
+{
+    "category" : "Motorcycle"
+}
+
+### Update Category
+PATCH http://localhost:5000/api/v1/category/878717f3-0221-4c5e-b400-6bba546038d9
+Content-Type: application/json
+
+{
+    "category" : "Machine"
+}
+
+### Delete Category
+DELETE http://localhost:5000/api/v1/category/99d564f8-dd28-4ff3-89d4-8ce95952bb82
+Content-Type: application/json

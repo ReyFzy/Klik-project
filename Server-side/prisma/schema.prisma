@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Definisi model User
+model User {
+  id             String      @id @default(uuid())
+  email          String      @unique
+  password       String
+  name           String
+  username       String      @unique
+  picture        String?
+  no_telp        String      @unique
+  gender         Gender
+  tgl_lahir      DateTime
+  role           Role
+  code_otp       String?
+  isVerifed      Boolean
+  products       Product[]
+  likes          Like[]      // Relasi dengan model Like
+  reviews        Review[]    // Relasi dengan model Review
+}
+
+// Definisi enum Gender
+enum Gender {
+  L
+  P
+}
+
+// Definisi enum Role
+enum Role {
+  owner
+  admin
+  user
+}
+
+// Definisi model Product
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  desc        String?
+  price       Int
+  quantity    Int
+  store       String
+  link        String
+  category    Category    @relation(fields: [category_id], references: [id])
+  category_id String
+  user        User        @relation(fields: [user_id], references: [id])
+  user_id     String       // Relasi dengan model User
+  images      ProductImg[] // Relasi dengan model ProductImg
+  likes       Like[]       // Relasi dengan model Like
+  reviews     Review[]     // Relasi dengan model Review
+}
+
+// Definisi model ProductImg
+model ProductImg {
+  id         String  @id @default(uuid())
+  url        String
+  product    Product @relation(fields: [product_id], references: [id])
+  product_id String
+}
+
+// Definisi model Like
+model Like {
+  id         String  @id @default(uuid())
+  product    Product @relation(fields: [product_id], references: [id])
+  product_id String
+  user       User    @relation(fields: [user_id], references: [id])
+  user_id    String
+}
+
+// Definisi model Category
+model Category {
+  id        String   @id @default(uuid())
+  category  String
+  products  Product[] // Relasi dengan model Product
+}
+
+// Definisi model Review
+model Review {
+  id         String   @id @default(uuid())
+  comment    String
+  rating     Float
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+  product    Product  @relation(fields: [product_id], references: [id])
+  product_id String
+}
