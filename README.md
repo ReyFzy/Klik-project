@@ -1,6 +1,6 @@
 # Klik-project
 
-Tugas <i> Catalog Website <i> bernama "Klik" oleh Kelompok 1 yang beranggotakan :
+Tugas <i> Catalog Website </i> bernama "Klik" oleh Kelompok 1 yang beranggotakan :
 1. Ahmad Dzidan Logika Sanma
 2. Galis Tresnaningsih
 3. Reyza Fauzy Mubarok
