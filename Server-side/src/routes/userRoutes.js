@@ -1,8 +1,8 @@
 import express from "express";
-import { Register } from "../controllers/userController.js";
+import { deleteUser } from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.post('/register', Register);
+router.delete('/user/:id', deleteUser);
 
 export const userRoutes = router;

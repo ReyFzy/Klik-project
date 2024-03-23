@@ -1,0 +1,68 @@
+STANDARD API
+
+{root.api}/api/{version}/{grouping}/{endpoint}
+VERSION : v1
+BASE URL:
+http://localhost:5000/api/v1/auth/login
+
+STANDAR STATUS RESPONSE
+
+200 - OK                      -->   Call API Success
+201 - CREATED                 -->   POST Success
+400 - BAD REQUEST             -->   Error on Client Side
+401 - UNAUTHORIZED            -->   User not Authorized to be request
+403 - FORBIDDEN               -->   User not allowed to access
+404 - NOT FOUND               -->   Request endpoint not found
+500 - INTERNAL SERVER ERROR   -->   Error on Server Side
+502 - BAD GATEWAY             -->   Invalid Response from another request
+
+GROUP: Authentication
+
+[1] - Register
+{root.api}/api/{version}/auth/register
+
+req:
+{
+    "email": "reyzafauzy7@gmail.com",
+    "password": "123456",
+    "username": "Rey",
+    "name" : "Reyza Fauzy M",
+    "no_telp": "08xxxxxxxxxxx",
+    "gender": "L",
+    "role": "owner",
+    "tgl_lahir": "2006-12-07",
+    "isVerifed" : false
+}
+res:
+{
+    "status" : 201
+    "msg": "Registration successful. OTP sent to your email."
+}
+
+err-response:
+{
+    500 --> "Failed to create or register user"
+}
+
+[2] - Login
+
+
+GROUP: User
+
+[1] Update User
+[2] Delete User
+
+GROUP: Category
+
+[1] Create Category
+[2] Get Category
+[3] Update Category 
+[4] Delete Category
+
+
+GROUP: Product
+
+[1] Create Category
+[2] Get Category
+[3] Update Category 
+[4] Delete Category

@@ -1,24 +1,48 @@
-POST http://localhost:5000/api/v1/users/register
+POST http://localhost:5000/api/v1/auth/register
 Content-Type: application/json
 
 {
-    "email": "arsenki270107@gmail.com",
+    "email": "syaefulpermana89@gmail.com",
     "password": "123456",
-    "username": "aryagemink",
-    "name" : "ariya sencaki",
-    "no_telp": "08xxxxxxx",
+    "username": "epulgemink",
+    "name" : "epuls",
+    "no_telp": "08xxxxxxxxxxx",
     "gender": "L",
     "role": "user",
     "tgl_lahir": "2001-01-27",
     "isVerifed" : false
 }
 
+###  Login
+
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email" : "reyzafauzy7@gmail.com",
+    "password" : "123456"
+}
+
+### otpVerif
+
+POST http://localhost:5000/api/v1/auth/login/otp-verif
+Content-Type: application/json
+
+{
+    "code_otp" : "919568"
+}
+
+### Delete User
+
+DELETE  http://localhost:5000/api/v1/user/f6f1d13d-028a-4afa-86a7-9fc6ff0a8d16
+Content-Type: application/json
+
 ### Create Category
 POST http://localhost:5000/api/v1/category/
 Content-Type: application/json
 
 {
-    "category" : "Motorcycle"
+    "category" : "Food"
 }
 
 ### Update Category
@@ -32,3 +56,55 @@ Content-Type: application/json
 ### Delete Category
 DELETE http://localhost:5000/api/v1/category/99d564f8-dd28-4ff3-89d4-8ce95952bb82
 Content-Type: application/json
+
+
+### Create Product
+POST http://localhost:5000/api/v1/product/
+Content-Type: application/json
+
+{
+    "name": "Sop",
+    "desc": "gatau boongan",
+    "price": 20000,
+    "quantity": 1,
+    "store": "Goput",
+    "link": "https://example.com/product",
+    "category_name": "Food",
+    "user_id" : "4eece1e5-c620-424e-af33-544f62daae37"
+}
+
+### Update Product
+
+PATCH http://localhost:5000/api/v1/product/08cb42cb-0bfa-488b-b035-45b2b269fdee
+Content-Type: application/json
+
+{
+    "quantity" : 3,
+    "user_id" : "4eece1e5-c620-424e-af33-544f62daae37"
+}
+
+### Get All Product (unsuc)
+
+GET http://localhost:5000/api/v1/products/Machine
+Content-Type: application/json
+
+### Delete product
+
+DELETE http://localhost:5000/api/v1/product/08cb42cb-0bfa-488b-b035-45b2b269fdee
+Content-Type: application/json
+
+
+### Send Review
+
+POST http://localhost:5000/api/v1/review/4573398f-7408-4a7d-846a-494f931a728e
+Content-Type: application/json
+
+{
+    "comment" : "tumbuhan yang bisa hidup di air",
+    "rating" : 4.9,
+    "user_id" : "02afc6d4-fb22-4422-87b3-ac22f18fcb3f"
+}
+
+### Get All Review
+
+### Delete Review
