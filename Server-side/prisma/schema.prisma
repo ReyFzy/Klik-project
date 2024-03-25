@@ -12,21 +12,21 @@ datasource db {
 
 // Definisi model User
 model User {
-  id             String      @id @default(uuid())
-  email          String      @unique
-  password       String
-  name           String
-  username       String      @unique
-  picture        String?
-  no_telp        String      @unique
-  gender         Gender
-  tgl_lahir      DateTime
-  role           Role
-  code_otp       String?
-  isVerifed      Boolean
-  products       Product[]
-  likes          Like[]      // Relasi dengan model Like
-  reviews        Review[]    // Relasi dengan model Review
+  id         String    @id @default(uuid())
+  email      String    @unique
+  password   String
+  name       String
+  username   String    @unique
+  picture    String?
+  no_telp    String    @unique
+  gender     Gender
+  tgl_lahir  DateTime
+  role       Role
+  code_otp   String?
+  isVerified Boolean   @default(false)
+  products   Product[]
+  likes      Like[] // Relasi dengan model Like
+  reviews    Review[] // Relasi dengan model Review
 }
 
 // Definisi enum Gender
@@ -44,20 +44,20 @@ enum Role {
 
 // Definisi model Product
 model Product {
-  id          String      @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
   desc        String?
   price       Int
   quantity    Int
   store       String
   link        String
-  category    Category    @relation(fields: [category_id], references: [id])
+  category    Category     @relation(fields: [category_id], references: [id])
   category_id String
-  user        User        @relation(fields: [user_id], references: [id])
-  user_id     String       // Relasi dengan model User
+  user        User         @relation(fields: [user_id], references: [id])
+  user_id     String // Relasi dengan model User
   images      ProductImg[] // Relasi dengan model ProductImg
-  likes       Like[]       // Relasi dengan model Like
-  reviews     Review[]     // Relasi dengan model Review
+  likes       Like[] // Relasi dengan model Like
+  reviews     Review[] // Relasi dengan model Review
 }
 
 // Definisi model ProductImg
@@ -79,18 +79,18 @@ model Like {
 
 // Definisi model Category
 model Category {
-  id        String   @id @default(uuid())
-  category  String
-  products  Product[] // Relasi dengan model Product
+  id       String    @id @default(uuid())
+  category String
+  products Product[] // Relasi dengan model Product
 }
 
 // Definisi model Review
 model Review {
-  id         String   @id @default(uuid())
+  id         String  @id @default(uuid())
   comment    String
   rating     Float
-  user       User     @relation(fields: [user_id], references: [id])
+  user       User    @relation(fields: [user_id], references: [id])
   user_id    String
-  product    Product  @relation(fields: [product_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
   product_id String
 }
