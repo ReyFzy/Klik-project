@@ -1,51 +1,57 @@
+import React, { useState } from 'react';
 import RegistImg from "../../assets/Auth/Register.svg";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-const Register =()=>{
+const Register = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleRegist =()=>{
-        alert("Asekkk Regist")
-        window.location = "/auth/verification"
+    const handleRegist = async (values) => {
+        setIsSubmitting(true);
+        setTimeout(() => {
+            window.location = "/auth/verification"
+            console.log("Form values:", values);
+            setIsSubmitting(false);
+        }, 3000);
     };
 
     const formik = useFormik({
-        initialValues : {
-            email : "",
-            password : "",
-            name : "",
-            username : ""
+        initialValues: {
+            email: "",
+            password: "",
+            name: "",
+            username: ""
         },
-        onSubmit : handleRegist,
-        validationSchema : yup.object().shape({
+        validationSchema: yup.object().shape({
             email: yup
-                .string("Silahkan isi dengan email anda!")
+                .string()
                 .email("Silahkan isi dengan format email '@' yang benar!")
                 .required("Email wajib diisi!"),
             password: yup
-                .string("Silahkan isi kata sandi anda!")
+                .string()
                 .min(8, "Kata sandi minimal terdiri dari 8 karakter")
                 .required("Kata sandi wajib diisi"),
-                name: yup
-                .string("Silahkan isi dengan nama anda!")
+            name: yup
+                .string()
                 .min(3, "Nama minimal terdiri dari 3 karakter")
                 .max(30, "Nama tidak boleh lebih dari 30 karakter")
                 .required("Nama wajib diisi!"),
-                username: yup
-                .string("Silahkan isi dengan username anda!")
+            username: yup
+                .string()
                 .min(3, "Username minimal terdiri dari 3 karakter")
                 .max(12, "Username tidak boleh lebih dari 12 karakter")
                 .required("Username wajib diisi!"),
-        })
+        }),
+        onSubmit: handleRegist
     });
 
-    const handleForm =(e)=>{
+    const handleForm = (e) => {
         const { target } = e;
         formik.setFieldValue(target.name, target.value)
     }
 
-    return(
+    return (
         <main className="flex items-center gap-40">
             <img src={RegistImg} alt="" className="w-[633px]" />
             <section className="flex flex-col max-w-[400px] gap-5">
@@ -63,8 +69,8 @@ const Register =()=>{
                                     <span className="label-text text-black">Email</span>
                                     <span className="label-text-alt">*Required</span>
                                 </div>
-                                <input type="email" onChange={handleForm} name="email" placeholder="Souris.Klik.23@gmail.com" className="input input-md input-bordered w-full input-primary bg-neutral-50 text-black placeholder:italic"/>
-                                <p className="text-xs text-error pl-2 py-1 italic">{ formik.errors.email }</p>
+                                <input type="email" onChange={handleForm} name="email" placeholder="Souris.Klik.23@gmail.com" className="input input-md input-bordered w-full input-primary bg-neutral-50 text-black placeholder:italic" />
+                                <p className="text-xs text-error pl-2 py-1 italic">{formik.errors.email}</p>
                             </label>
 
                             <label className="form-control w-full">
@@ -72,8 +78,8 @@ const Register =()=>{
                                     <span className="label-text text-black">Password</span>
                                     <span className="label-text-alt">*Required</span>
                                 </div>
-                                <input type="password" onChange={handleForm} name="password" placeholder="······" className="input input-bordered w-full input-primary bg-neutral-50 text-black placeholder:italic"/>
-                                <p className="text-xs text-error pl-2 py-1 italic">{ formik.errors.password }</p>
+                                <input type="password" onChange={handleForm} name="password" placeholder="······" className="input input-bordered w-full input-primary bg-neutral-50 text-black placeholder:italic" />
+                                <p className="text-xs text-error pl-2 py-1 italic">{formik.errors.password}</p>
 
                             </label>
                         </div>
@@ -85,7 +91,7 @@ const Register =()=>{
                                     <span className="label-text-alt">*Required</span>
                                 </div>
                                 <input type="text" onChange={handleForm} name="name" placeholder="Souris Company" className="input input-md input-bordered w-full input-primary bg-neutral-50 text-black placeholder:italic" />
-                                <p className="text-xs text-error pl-2 py-1 italic">{ formik.errors.name }</p>
+                                <p className="text-xs text-error pl-2 py-1 italic">{formik.errors.name}</p>
 
                             </label>
 
@@ -95,18 +101,19 @@ const Register =()=>{
                                     <span className="label-text-alt">*Required</span>
                                 </div>
                                 <input type="text" onChange={handleForm} name="username" placeholder="Klik" className="input input-bordered w-full input-primary bg-neutral-50 text-black placeholder:italic" />
-                                <p className="text-xs text-error pl-2 py-1 italic">{ formik.errors.username }</p>
+                                <p className="text-xs text-error pl-2 py-1 italic">{formik.errors.username}</p>
                             </label>
                         </div>
                     </section>
-
-                    <button type="submit" className="btn btn-primary text-white w-full">Daftar</button>
+                    <button type="submit" disabled={isSubmitting} className="btn btn-primary text-white w-full">
+                        {isSubmitting ? <span className="loading loading-spinner"></span> : "Daftar"}
+                    </button>
                     <p className="text-sm">Udah punya akun?<Link to="/auth/" className="text-primary"> Masuk disini!</Link></p>
                 </form>
                 <p className="text-sm text-center">Dengan Login, Kamu menyetujui<Link className="text-primary"> Ketentuan Penggunaan </Link>dan <Link className="text-primary">Kebijakan Privasi</Link> </p>
             </section>
         </main>
-    )
+    );
 }
 
 export default Register;
