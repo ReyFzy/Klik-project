@@ -1,6 +1,6 @@
 import { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
-import { verifyToken } from "../lib/jwtHandler";
-import { prisma } from "../lib/prismaClient";
+import { verifyToken } from "../lib/jwtHandler.js";
+import { prisma } from "../lib/prismaClient.js";
 
 export const authenticated = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1]; // Assuming token is sent in the Authorization header as "Bearer <token>"

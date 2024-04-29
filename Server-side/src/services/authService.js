@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 
-import { smtpConfig } from '../config/smtpConfig';
-import { createToken } from '../lib/jwtHandler';
+import { smtpConfig } from '../config/smtpConfig.js';
+import { createToken } from '../lib/jwtHandler.js';
 
 /**
  * 

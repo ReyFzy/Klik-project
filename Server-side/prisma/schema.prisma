@@ -21,7 +21,7 @@ model User {
   no_telp    String    @unique
   gender     Gender
   tgl_lahir  DateTime
-  role       Role
+  role       Role      @default(user)
   code_otp   String?
   isVerified Boolean   @default(false)
   products   Product[]

@@ -89,6 +89,10 @@ export const login = async (req, res) => {
         });
 
         if (!user) return res.status(404).json({ message: 'User not found' });
+        
+        const passwordIsValid = authService.comparePassword(password, user.password);
+        
+        if (!passwordIsValid) return res.status(400).json({ message: 'Invalid password' });
 
         if (!user.isVerified) {
             const otpCode = authService.generateOTPCode();
@@ -97,11 +101,7 @@ export const login = async (req, res) => {
 
             return res.status(403).json({ message: "User is not verified" })
         };
-
-        const passwordIsValid = authService.comparePassword(password, user.password);
-
-        if (!passwordIsValid) return res.status(400).json({ message: 'Invalid password' });
-
+        
         await prisma.$disconnect();
 
         const accessToken = authService.createAccessToken(user);
