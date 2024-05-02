@@ -8,6 +8,8 @@ import UpdateUser from "./pages/Dashboard/Users/UpdateUser";
 import CreateProduct from "./pages/Dashboard/Products/CreateProduct"
 import UpdateProduct from "./pages/Dashboard/Products/UpdateProduct";
 import OtpVerif from "./pages/Auth/OtpVerif";
+import Navbar from "./pages/LandingPage";
+import NextTopLoader from 'nextjs-toploader';
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -15,8 +17,23 @@ function App() {
 
   return (
     <Router>
+      <NextTopLoader
+        color="#10B981"
+        initialPosition={0.08}
+        crawlSpeed={200}
+        height={4}
+        crawl={true}
+        showSpinner={true}
+        easing="ease"
+        speed={200}
+        shadow="0 0 10px #10B981,0 0 5px #10B981"
+        template='<div class="bar" role="bar"><div class="peg"></div></div> 
+        <div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
+        zIndex={1600}
+        showAtBottom={false}
+      />
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Navbar />} />
         <Route path="/dashboard/*" element={<DashboardRoutes />} />
         <Route path="/auth/*" element={<AuthRoutes />} />
         <Route path="*" element={<PageNotFound />} />
