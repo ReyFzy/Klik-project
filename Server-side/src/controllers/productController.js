@@ -110,41 +110,44 @@ export async function updateProduct(req, res){
 
 export async function getAllProduct(req, res){
     try {
-        const { category } = req.params;
+        const skip = req.query.skip ? +req.query.skip : 0;
+        const take = req.query.take ? +req.query.take : 5;
+
+        const products = await prisma.products.findMany({
+            skip: skip,
+            take: take,
+            include: {
+                categories: true,
+                users: true
+            }
+        });
+
+        if (!products.length) return res.status(404).json({message: "Products not found"});
+
+        const response = products.map(products =>({
+            id: products.id,
+            name: products.name,
+            store: products.store,
+            desc: products.desc,
+            price: products.price,
+            quantity: products.quantity,
+            link: products.link,
+            category: {
+                id: products.product_id,
+                category: products.categories.category
+            },
+            admin: {
+                id: products.user_id,
+                name: products.users.name
+            }
+        }));
         
-        const findCategory = await prisma.categories.findFirst({
-            where: {
-                category: category
-            },
-            select: {
-                id: true
-            }
-        });
-        if (!findCategory) {
-            return res.status(404).json({ error: 'Category not found' });
-        }
-        const productsInCategory = await prisma.products.findMany({
-            where: {
-                id: category.id
-            },
-            select: {
-                name: true,
-                desc: true,
-                price: true,
-                quantity: true,
-                store: true,
-                link: true,
-                category: true,
-            }
-        });
-        if (!productsInCategory || productsInCategory.length === 0) {
-            return res.status(404).json({ error: 'No products found in the specified category' });
-        }
-        await prisma.$disconnect();
-        res.status(200).json(productsInCategory);
+        res.status(200).json(response);
     } catch (error) {
-        console.error('Error fetching products by category:', error);
+        console.error('Error get all data product :', error);
         res.status(500).json({ error: 'Failed to fetch products by category' });
+    } finally {
+        await prisma.$disconnect();
     }
 }
 
