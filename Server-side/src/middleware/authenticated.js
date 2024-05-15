@@ -27,8 +27,8 @@ export const authenticated = async (req, res, next) => {
 
     } catch (err) {
         if (err instanceof jwt.JsonWebTokenError) return res.status(403).json({ message: err.message })
-
-        return res.status(500).json({ message: "Internal server error" });
+        console.error("Error in middleware :", err)
+        return res.status(500).json({ message: "Internal server error"});
     }
 
 }
