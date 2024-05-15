@@ -120,3 +120,21 @@ export const login = async (req, res) => {
         await prisma.$disconnect();
     }
 }
+
+export const logout = async (req, res) => {
+    try {
+        res.clearCookie('access_token', {
+            path: "/",
+            sameSite: "Strict",
+            httpOnly: true
+        });
+
+        return res.status(200).json({ message: "Successfully logged out" });
+    } catch (err) {
+        console.error('Error while logout: ', err);
+
+        return res.status(500).json({ message: "Internal server error" });
+    } finally {
+        await prisma.$disconnect()
+    }
+}
