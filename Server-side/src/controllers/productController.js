@@ -76,14 +76,15 @@ export async function createProductNImg(req, res){
 export async function updateProduct(req, res){
     try {
         const { id } = req.params;
-        const { name, desc, price, quantity, store, link, category_name, user_id} = req.body;
+        const { name, desc, price, quantity, store, link, category_name} = req.body;
+        const user_id = req.locals.user.id;
         const category_id = await findCategoryIdByName(category_name);
         const updatedProduct = await prisma.products.update({
             where : { 
                 id : id
             },
             data : {
-                name : name,
+                name,
                 desc,
                 price,
                 quantity,
@@ -92,7 +93,7 @@ export async function updateProduct(req, res){
                 categories : {
                     connect : {id : category_id}
                 },
-                user : {
+                users : {
                     connect : {id : user_id}
                 }
             }
