@@ -2,11 +2,13 @@ import { prisma } from "../lib/prismaClient.js";
 
 export async function createProduct(req, res){
     try {
-        const { name, desc, price, quantity, store, link, category_name, user_id } = req.body;
-        // const user_id = req.user.id;
+        const { name, desc, price, quantity, store, link, category_name } = req.body;
+        const user_id = req.locals.user.id;
+        console.log(user_id)
         const category_id = await findCategoryIdByName(category_name);
+        console.log(category_id)
 
-        const newProduct = await prisma.product.create({
+        const newProduct = await prisma.products.create({
             data : {
                 name,
                 desc,
@@ -14,10 +16,10 @@ export async function createProduct(req, res){
                 quantity,
                 store,
                 link,
-                category : {
+                categories : {
                     connect : {id : category_id}
                 },
-                user : {
+                users : {
                     connect : {id : user_id}
                 }
             }
@@ -26,19 +28,57 @@ export async function createProduct(req, res){
         console.log('New product created:', newProduct);
         res.status(201).json({ message: 'Product created successfully' });
     } catch (error) {
-        console.log(error);
+        console.error("Failed to create product: ", error);
         res.status(500).json({msg: "Failed to create product"});
     }
 }
 
+export async function createProductNImg(req, res){
+    try {
+        const { name, desc, price, quantity, store, link, category_name, url } = req.body;
+        const user_id = req.locals.user.id;
+        console.log(user_id)
+        const category_id = await findCategoryIdByName(category_name);
+        console.log(category_id)
+
+        const newProduct = await prisma.products.create({
+            data : {
+                name,
+                desc,
+                price,
+                quantity,
+                store,
+                link,
+                categories : {
+                    connect : {id : category_id}
+                },
+                users : {
+                    connect : {id : user_id}
+                }
+            }
+        });
+
+        const product = await prisma.productImg.create({
+            data: {
+                url,
+                product_id: newProduct.id
+            }
+        })
+        await prisma.$disconnect();
+        console.log('New product created:', newProduct, product);
+        res.status(201).json({ message: 'Product created successfully' });
+    } catch (error) {
+        console.error("Failed to create product: ", error);
+        res.status(500).json({msg: "Failed to create product"});
+    }
+}
 
 export async function updateProduct(req, res){
     try {
         const { id } = req.params;
         const { name, desc, price, quantity, store, link, category_name, user_id} = req.body;
-        // const user_id = req.user.id;
         const category_id = await findCategoryIdByName(category_name);
-        const updatedProduct = await prisma.product.update({
+        const updatedProduct = await prisma.products.update({
             where : { 
                 id : id
             },
@@ -49,7 +89,7 @@ export async function updateProduct(req, res){
                 quantity,
                 store,
                 link,
-                category : {
+                categories : {
                     connect : {id : category_id}
                 },
                 user : {
@@ -71,7 +111,7 @@ export async function getAllProduct(req, res){
     try {
         const { category } = req.params;
         
-        const findCategory = await prisma.category.findFirst({
+        const findCategory = await prisma.categories.findFirst({
             where: {
                 category: category
             },
@@ -82,7 +122,7 @@ export async function getAllProduct(req, res){
         if (!findCategory) {
             return res.status(404).json({ error: 'Category not found' });
         }
-        const productsInCategory = await prisma.product.findMany({
+        const productsInCategory = await prisma.products.findMany({
             where: {
                 id: category.id
             },
@@ -111,7 +151,7 @@ export async function getAllProduct(req, res){
 export async function deleteProduct(req, res){
     try {
         const { id } = req.params;
-        const deletedProduct = await prisma.product.delete({
+        const deletedProduct = await prisma.products.delete({
             where :{
                 id : id 
             }
@@ -129,7 +169,7 @@ export async function deleteProduct(req, res){
 
     async function findCategoryIdByName(categoryName){
         try {
-            const category = await prisma.category.findFirst({
+            const category = await prisma.categories.findFirst({
                 where : {
                     category : categoryName
                 },

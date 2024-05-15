@@ -1,32 +1,30 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongodb"]
+}
+
 // Definisi model User
-model User {
-  id         String    @id @default(uuid())
-  email      String    @unique
+model Users {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  email      String     @unique
   password   String
   name       String
-  username   String    @unique
+  username   String     @unique
   picture    String?
-  no_telp    String    @unique
+  no_telp    String     @unique
   gender     Gender
   tgl_lahir  DateTime
-  role       Role      @default(user)
+  role       Role       @default(user)
   code_otp   String?
-  isVerified Boolean   @default(false)
-  products   Product[]
-  likes      Like[] // Relasi dengan model Like
-  reviews    Review[] // Relasi dengan model Review
+  isVerified Boolean    @default(false)
+  products   Products[]
+  likes      Likes[]
+  reviews    Reviews[]
 }
 
 // Definisi enum Gender
@@ -40,57 +38,58 @@ enum Role {
   owner
   admin
   user
+  guest
 }
 
 // Definisi model Product
-model Product {
-  id          String       @id @default(uuid())
+model Products {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   desc        String?
   price       Int
   quantity    Int
   store       String
   link        String
-  category    Category     @relation(fields: [category_id], references: [id])
-  category_id String
-  user        User         @relation(fields: [user_id], references: [id])
-  user_id     String // Relasi dengan model User
-  images      ProductImg[] // Relasi dengan model ProductImg
-  likes       Like[] // Relasi dengan model Like
-  reviews     Review[] // Relasi dengan model Review
+  categories  Categories   @relation(fields: [category_id], references: [id])
+  category_id String       @db.ObjectId
+  users       Users        @relation(fields: [user_id], references: [id])
+  user_id     String       @db.ObjectId
+  images      ProductImg[]
+  likes       Likes[]
+  reviews     Reviews[]
 }
 
 // Definisi model ProductImg
 model ProductImg {
-  id         String  @id @default(uuid())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   url        String
-  product    Product @relation(fields: [product_id], references: [id])
-  product_id String
+  products   Products @relation(fields: [product_id], references: [id])
+  product_id String   @db.ObjectId
 }
 
 // Definisi model Like
-model Like {
-  id         String  @id @default(uuid())
-  product    Product @relation(fields: [product_id], references: [id])
-  product_id String
-  user       User    @relation(fields: [user_id], references: [id])
-  user_id    String
+model Likes {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  products   Products @relation(fields: [product_id], references: [id])
+  product_id String   @db.ObjectId
+  users      Users    @relation(fields: [user_id], references: [id])
+  user_id    String   @db.ObjectId
 }
 
 // Definisi model Category
-model Category {
-  id       String    @id @default(uuid())
+model Categories {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
   category String
-  products Product[] // Relasi dengan model Product
+  products Products[]
 }
 
 // Definisi model Review
-model Review {
-  id         String  @id @default(uuid())
+model Reviews {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   comment    String
   rating     Float
-  user       User    @relation(fields: [user_id], references: [id])
-  user_id    String
-  product    Product @relation(fields: [product_id], references: [id])
-  product_id String
+  user       Users    @relation(fields: [user_id], references: [id])
+  user_id    String   @db.ObjectId
+  product    Products @relation(fields: [product_id], references: [id])
+  product_id String   @db.ObjectId
 }
