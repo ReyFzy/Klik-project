@@ -3,8 +3,8 @@ import { createCategory, deleteCategory, updateCategory } from "../controllers/c
 
 const router = express.Router();
 
-router.post('/', createCategory);
-router.patch('/:id', updateCategory);
-router.delete('/:id', deleteCategory);
+router.post('/category', createCategory);
+router.patch('/category/:id', updateCategory);
+router.delete('/category/:id', deleteCategory);
 
 export const categoryRoutes = router;
