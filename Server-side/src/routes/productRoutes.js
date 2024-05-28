@@ -1,11 +1,15 @@
 import express from "express";
-import { createProduct, deleteProduct, getAllProduct, updateProduct } from "../controllers/productController.js";
+import * as productController from "../controllers/productController.js";
+import { authenticated } from "../middleware/authenticated.js";
+import { uploadProductPicture } from "../services/multerService.js";
 
 const router = express.Router();
 
-router.post("/product/", createProduct);
-router.patch("/product/:id", updateProduct);
-router.get("/products/:category", getAllProduct);
-router.delete("/product/:id", deleteProduct);
+router.post("/product/", authenticated, productController.createProduct);
+router.post("/product/create", uploadProductPicture, authenticated, productController.createProductNImg);
+router.patch("/product/:id", authenticated, productController.updateProduct);
+router.get("/products", productController.getAllProduct);
+router.get("/product/:id", productController.getProductById);
+router.delete("/product/:id", productController.deleteProduct);
 
 export const productRoutes = router;
