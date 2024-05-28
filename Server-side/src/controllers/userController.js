@@ -22,6 +22,9 @@ export async function updateAccount (req, res) {
         const userId = req.locals.user.id;
         const userDTO = req.body;
 
+        const pictureFileName = req.file ? req.file.filename : null;
+        const pictureUrl = pictureFileName ? `/uploads/${pictureFileName}` : null;
+
         const account = await prisma.users.findFirst({
             where: {
                 id: userId
@@ -34,7 +37,7 @@ export async function updateAccount (req, res) {
                 password: userDTO.password,
                 name: userDTO.name,
                 username: userDTO.username,
-                picture:  req.file ? req.file.filename : null,
+                picture:  pictureUrl,
                 no_telp: userDTO.no_telp,
                 gender: userDTO.gender,
                 tgl_lahir: userDTO.tgl_lahir,
