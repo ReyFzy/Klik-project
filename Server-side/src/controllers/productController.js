@@ -60,7 +60,7 @@ export async function createProductNImg(req, res){
 
         const product = await prisma.productImg.create({
             data: {
-                url,
+                url : req.file ? req.file.filename : null,
                 product_id: newProduct.id
             }
         })
@@ -142,15 +142,56 @@ export async function getAllProduct(req, res){
             }
         }));
         
+        
         res.status(200).json(response);
     } catch (error) {
         console.error('Error get all data product :', error);
-        res.status(500).json({ error: 'Failed to fetch products by category' });
+        res.status(500).json({ error: 'Failed to fetch products' });
     } finally {
         await prisma.$disconnect();
     }
 }
 
+export async function getProductById(req, res){
+    try {
+        const productId = req.params.id;
+        const product = await prisma.products.findFirst({
+            where:{
+                id: productId
+            },
+            include:{
+                categories: true,
+                users: true
+            }
+        });
+
+        if (!product) return res.status(404).json({message: "Product not found"});
+
+        const response = {
+            id: product.id,
+            name: product.name,
+            store: product.store,
+            desc: product.desc,
+            price: product.price,
+            quantity: product.quantity,
+            link: product.link,
+            category: {
+                id: product.product_id,
+                category: product.categories.category
+            },
+            admin: {
+                id: product.user_id,
+                name: product.users.name
+            }
+        };
+        res.status(200).json(response);
+    } catch (error) {
+        console.error('Error get data product :', error);
+        res.status(500).json({ error: 'Failed to fetch product' });
+    } finally {
+        await prisma.$disconnect()
+    }
+}
 
 export async function deleteProduct(req, res){
     try {
