@@ -5,8 +5,7 @@ import { uploadProductPicture } from "../services/multerService.js";
 
 const router = express.Router();
 
-router.post("/product/", authenticated, productController.createProduct);
-router.post("/product/create", uploadProductPicture, authenticated, productController.createProductNImg);
+router.post("/product/", uploadProductPicture, authenticated, productController.createProduct);
 router.patch("/product/:id", authenticated, productController.updateProduct);
 router.get("/products", productController.getAllProduct);
 router.get("/product/:id", productController.getProductById);

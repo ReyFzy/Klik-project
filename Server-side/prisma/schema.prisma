@@ -22,6 +22,9 @@ model Users {
   role       Role       @default(user)
   code_otp   String?
   isVerified Boolean    @default(false)
+  create_at  DateTime
+  update_at  DateTime
+  login_at   DateTime
   products   Products[]
   likes      Likes[]
   reviews    Reviews[]
@@ -50,26 +53,21 @@ model Products {
   quantity    Int
   store       String
   link        String
+  picture     String?
+  create_at   DateTime      @default(now())
+  update_at   DateTime
   categories  Categories   @relation(fields: [category_id], references: [id])
   category_id String       @db.ObjectId
   users       Users        @relation(fields: [user_id], references: [id])
   user_id     String       @db.ObjectId
-  images      ProductImg[]
   likes       Likes[]
   reviews     Reviews[]
-}
-
-// Definisi model ProductImg
-model ProductImg {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  url        String
-  products   Products @relation(fields: [product_id], references: [id])
-  product_id String   @db.ObjectId
 }
 
 // Definisi model Like
 model Likes {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  create_at  DateTime
   products   Products @relation(fields: [product_id], references: [id])
   product_id String   @db.ObjectId
   users      Users    @relation(fields: [user_id], references: [id])
@@ -80,6 +78,8 @@ model Likes {
 model Categories {
   id       String     @id @default(auto()) @map("_id") @db.ObjectId
   category String
+  create_at  DateTime
+  update_at  DateTime
   products Products[]
 }
 
@@ -88,8 +88,17 @@ model Reviews {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   comment    String
   rating     Float
+  create_at  DateTime
   user       Users    @relation(fields: [user_id], references: [id])
   user_id    String   @db.ObjectId
   product    Products @relation(fields: [product_id], references: [id])
   product_id String   @db.ObjectId
+}
+
+// Definisi model Event
+model Events {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  event      String
+  link       String
+  create_at  DateTime
 }

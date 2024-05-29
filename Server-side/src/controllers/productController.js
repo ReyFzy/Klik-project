@@ -2,11 +2,13 @@ import { prisma } from "../lib/prismaClient.js";
 
 export async function createProduct(req, res){
     try {
-        const { name, desc, price, quantity, store, link, category_name } = req.body;
+        const { name, desc, price, quantity, store, link, category_name  } = req.body;
         const user_id = req.locals.user.id;
-        console.log(user_id)
+
+        const pictureFileName = req.file ? req.file.filename : null;
+        const pictureUrl = pictureFileName ? `/uploads/${pictureFileName}` : null;
+
         const category_id = await findCategoryIdByName(category_name);
-        console.log(category_id)
 
         const newProduct = await prisma.products.create({
             data : {
@@ -16,6 +18,9 @@ export async function createProduct(req, res){
                 quantity,
                 store,
                 link,
+                picture: pictureUrl,
+                create_at: new Date(),
+                update_at: new Date(),
                 categories : {
                     connect : {id : category_id}
                 },
@@ -26,59 +31,25 @@ export async function createProduct(req, res){
         });
         await prisma.$disconnect();
         console.log('New product created:', newProduct);
-        res.status(201).json({ message: 'Product created successfully' });
+        res.status(201).json({ message: 'Product created successfully', newProduct });
     } catch (error) {
         console.error("Failed to create product: ", error);
         res.status(500).json({msg: "Failed to create product"});
     }
 }
 
-export async function createProductNImg(req, res){
-    try {
-        const { name, desc, price, quantity, store, link, category_name, url } = req.body;
-        const user_id = req.locals.user.id;
-        console.log(user_id)
-        const category_id = await findCategoryIdByName(category_name);
-        console.log(category_id)
-
-        const newProduct = await prisma.products.create({
-            data : {
-                name,
-                desc,
-                price,
-                quantity,
-                store,
-                link,
-                categories : {
-                    connect : {id : category_id}
-                },
-                users : {
-                    connect : {id : user_id}
-                }
-            }
-        });
-
-        const product = await prisma.productImg.create({
-            data: {
-                url : req.file ? req.file.filename : null,
-                product_id: newProduct.id
-            }
-        })
-        await prisma.$disconnect();
-        console.log('New product created:', newProduct, product);
-        res.status(201).json({ message: 'Product created successfully' });
-    } catch (error) {
-        console.error("Failed to create product: ", error);
-        res.status(500).json({msg: "Failed to create product"});
-    }
-}
 
 export async function updateProduct(req, res){
     try {
         const { id } = req.params;
         const { name, desc, price, quantity, store, link, category_name} = req.body;
         const user_id = req.locals.user.id;
+
+        const pictureFileName = req.file ? req.file.filename : null;
+        const pictureUrl = pictureFileName ? `/uploads/${pictureFileName}` : null;
+
         const category_id = await findCategoryIdByName(category_name);
+
         const updatedProduct = await prisma.products.update({
             where : { 
                 id : id
@@ -90,17 +61,20 @@ export async function updateProduct(req, res){
                 quantity,
                 store,
                 link,
+                picture: pictureUrl,
                 categories : {
                     connect : {id : category_id}
                 },
                 users : {
                     connect : {id : user_id}
-                }
+                },
+                create_at: new Date().toISOString(),
+                update_at : new Date().toISOString()
             }
         });
         await prisma.$disconnect();
         console.log('Product updated:', updatedProduct);
-        res.status(200).json({ message: 'Product updated successfully' });
+        res.status(200).json({ message: 'Product updated successfully', updatedProduct });
     } catch (error) {
         console.log(error);
         res.status(500).json({ msg: "Failed to update product" });
@@ -118,11 +92,11 @@ export async function getAllProduct(req, res){
             take: take,
             include: {
                 categories: true,
-                users: true
+                users: true,
             }
         });
 
-        if (!products.length) return res.status(404).json({message: "Products not found"});
+        // if (!products.length) return res.status(404).json({message: "Products not found"});
 
         const response = products.map(products =>({
             id: products.id,
@@ -132,6 +106,7 @@ export async function getAllProduct(req, res){
             price: products.price,
             quantity: products.quantity,
             link: products.link,
+            productImg: products.picture,
             category: {
                 id: products.product_id,
                 category: products.categories.category
@@ -139,9 +114,10 @@ export async function getAllProduct(req, res){
             admin: {
                 id: products.user_id,
                 name: products.users.name
-            }
+            },
+            create_at: products.create_at,
+            update_at: products.update_at
         }));
-        
         
         res.status(200).json(response);
     } catch (error) {
@@ -175,6 +151,7 @@ export async function getProductById(req, res){
             price: product.price,
             quantity: product.quantity,
             link: product.link,
+            productImg: product.picture,
             category: {
                 id: product.product_id,
                 category: product.categories.category
@@ -182,7 +159,9 @@ export async function getProductById(req, res){
             admin: {
                 id: product.user_id,
                 name: product.users.name
-            }
+            },
+            create_at: product.create_at,
+            update_at: product.update_at
         };
         res.status(200).json(response);
     } catch (error) {

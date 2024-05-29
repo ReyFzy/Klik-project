@@ -30,6 +30,9 @@ export const register = async (req, res) => {
                 tgl_lahir: new Date(registerDTO.tgl_lahir).toISOString(),
                 role: registerDTO.role,
                 code_otp: otpCode,
+                create_at: new Date().toISOString(),
+                update_at: new Date().toISOString(),
+                login_at: new Date().toISOString()
             }
         });
 
@@ -102,6 +105,13 @@ export const login = async (req, res) => {
             return res.status(403).json({ message: "User is not verified" })
         };
         
+        await prisma.users.update({
+            where: { id: user.id },
+            data: {
+                login_at : new Date().toISOString()
+            }
+        });
+
         const accessToken = authService.createAccessToken(user);
 
         res.cookie('access_token', accessToken, {
@@ -114,7 +124,6 @@ export const login = async (req, res) => {
         return res.status(200).json({ accessToken });
     } catch (err) {
         console.error('Error while login: ', err);
-
         return res.status(500).json({ message: "Internal server error" });
     } finally {
         await prisma.$disconnect();

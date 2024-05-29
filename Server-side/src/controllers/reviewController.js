@@ -14,15 +14,65 @@ export async function createReview (req, res){
                     connect : {id : product_id}
                 },
                 comment: comment,
-                rating: rating
+                rating: rating,
+                create_at: new Date()
             }
         });
         console.log(addReview);
         await prisma.$disconnect();
-        res.status(200).json({msg: "Success to add review!"})
+        res.status(200).json({msg: "Success to add review!", addReview})
     } catch (error) {
         console.log(error);
         res.status(500).json({msg: "Failed to create review"});
+    }
+}
+
+
+export async function getReviewByProduct(req, res) {
+    try {
+        const skip = req.query.skip ? +req.query.skip : 0;
+        const take = req.query.take ? +req.query.take : 5;
+
+        const productId = req.params.product_id
+
+        const reviews = await prisma.reviews.findMany({
+            skip,
+            take,
+            where: {
+                product_id: productId
+            },
+            include: {
+                product: true,
+                user: true
+            }
+        });
+
+        if (!reviews.length) return res.status(404).json({message: "Reviews not found"});
+
+        const response = reviews.map(reviews => ({
+            id: reviews.id,
+            product: {
+                id: reviews.product.product_id,
+                productName: reviews.product.name,
+                comment: reviews.comment,
+                rating: reviews.rating,
+                create_at: reviews.create_at
+            },
+            user: {
+                id: reviews.user.user_id,
+                picture: reviews.user.picture,
+                email: reviews.user.email,
+                name: reviews.user.name,
+                username: reviews.user.username
+            }
+        }))
+
+        return res.status(200).json( response );
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: "Failed to get all review"});
+    } finally {
+        await prisma.$disconnect()
     }
 }
 
@@ -33,8 +83,8 @@ export async function getAllReview(req, res) {
         const take = req.query.take ? +req.query.take : 5;
 
         const reviews = await prisma.reviews.findMany({
-            skip: skip,
-            take: take,
+            skip,
+            take,
             include: {
                 user: true,
                 product: true
@@ -48,17 +98,20 @@ export async function getAllReview(req, res) {
             product: {
                 id: reviews.product.product_id,
                 productName: reviews.product.name,
-                comment: reviews.comment
+                comment: reviews.comment,
+                rating: reviews.rating,
+                create_at: reviews.create_at
             },
             user: {
                 id: reviews.user.user_id,
+                picture: reviews.user.picture,
                 email: reviews.user.email,
                 name: reviews.user.name,
                 username: reviews.user.username
             }
         }))
 
-        return res.status(200).json( response )
+        return res.status(200).json( response );
     } catch (error) {
         console.log(error);
         res.status(500).json({message: "Failed to get all review"});
@@ -108,7 +161,8 @@ export async function createLike(req, res){
                 },
                 products : {
                     connect : {id : productId}
-                }
+                },
+                create_at: new Date()
             }
         });
 
