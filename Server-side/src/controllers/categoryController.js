@@ -16,6 +16,21 @@ export async function createCategory(req, res){
     }
 }
 
+export async function getAllCategory(req, res){
+    try {
+        const categories = await prisma.categories.findMany({});
+
+        if (!categories.length) return res.status(404).json({ message: "Categories not found" });
+        
+        res.status(200).json(categories);
+    } catch (error) {
+        console.error("Failed to get all category : ", error)
+        res.status(500).json({message: 'Failed to get all category'});
+    } finally {
+        await prisma.$disconnect()
+    }
+}
+
 export async function updateCategory(req, res){
     try {
         const categoryId = req.params.id;
