@@ -18,3 +18,4 @@ export const storage = multer.diskStorage({
 
 export const uploadAccountPicture = multer({ storage: storage }).single('picture');
 export const uploadProductPicture = multer({ storage: storage }).single('url');
+export const uploadEventPicture = multer({ storage: storage }).single('event');

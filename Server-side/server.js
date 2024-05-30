@@ -8,9 +8,10 @@ import { categoryRoutes } from "./src/routes/categoryRoutes.js";
 import { reviewRoutes } from "./src/routes/reviewRoutes.js";
 import { productRoutes } from "./src/routes/productRoutes.js";
 import { authRoutes } from "./src/routes/authRoutes.js";
+import { eventRoutes } from "./src/routes/eventRoutes.js";
 import { initLocals } from "./src/middleware/initLocals.js";
 
-const PORT = 5000;
+const port = process.env.PORT || 5000;
 const app = express();
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/v1', userRoutes);
 app.use('/api/v1', categoryRoutes);
 app.use('/api/v1', productRoutes);
 app.use('/api/v1', reviewRoutes);
-app.use('/api/v1',authRoutes);
+app.use('/api/v1', authRoutes);
+app.use('/api/v1', eventRoutes);
 
-app.listen(PORT, ()=> console.log(`server running at port ${PORT}`))
+app.listen(port, ()=> console.log(`server running at port ${port}`))
